@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace BasicCalculator
@@ -18,6 +12,10 @@ namespace BasicCalculator
     {
         #region Constructor
 
+        /// <summary>
+        /// Constructor for the calculator class
+        /// initialises all variables
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
@@ -40,36 +38,37 @@ namespace BasicCalculator
 
         private void DELButton_Click(object sender, EventArgs e)
         {
-
+            DeleteTextValue();  //Deletes the value in front of the current cursor position
+            FocusInputText();   //put the focus back to the user input box           
         }
 
         private void DivButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("/");
+            InsertTextValue("/");   //inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void MultButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("*");
+            InsertTextValue("*");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void MinusButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("-");
+            InsertTextValue("-");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void AddButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("+");
+            InsertTextValue("+");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void EqualsButton_Click(object sender, EventArgs e)
         { 
-            CalculateEquation();
+            CalculateEquation();    //Calculates the equation that is in the text box
         }
 
 
@@ -80,67 +79,67 @@ namespace BasicCalculator
 
         private void PeriodButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue(".");
+            InsertTextValue(".");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void ZeroButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("0");
+            InsertTextValue("0");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void OneButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("1");
+            InsertTextValue("1");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void TwoButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("2");
+            InsertTextValue("2");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void ThreeButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("3");
+            InsertTextValue("3");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void FourButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("4");
+            InsertTextValue("4");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void FiveButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("5");
+            InsertTextValue("5");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void SixButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("6");
+            InsertTextValue("6");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void SevenButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("7");
+            InsertTextValue("7");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void EightButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("8");
+            InsertTextValue("8");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
         private void NineButton_Click(object sender, EventArgs e)
         {
-            InsertTextValue("9");
+            InsertTextValue("9");//inserts the given value at the current cursor location
             FocusInputText();   //put the cursor back to the user input box
         }
 
@@ -164,9 +163,47 @@ namespace BasicCalculator
             this.UserInputText.Focus();
         }
 
+        /// <summary>
+        /// Insert a section of text to the user input box
+        /// </summary>
+        /// <param name="Value"></param>
+
         private void InsertTextValue(string Value)
         {
-            this.UserInputText.Text = this.UserInputText.Text.Insert(this.UserInputText.SelectionStart, Value);
+            //remember where the cursor is and save it to a variable
+            var SelectionStart = this.UserInputText.SelectionStart;
+
+            //copy text and replace with new value in
+            this.UserInputText.Text = this.UserInputText.Text.Insert(this.UserInputText.SelectionStart, Value); 
+
+            //set the cursor to a position after what we have just inserted
+            this.UserInputText.SelectionStart = SelectionStart + Value.Length;
+        }
+
+        /// <summary>
+        /// delete a section of text to the user input box
+        /// </summary>
+        /// <param name="Value"></param>
+
+        private void DeleteTextValue()
+        {
+            //check if there is anything in fromt of the cursor to delete
+            //if not, exit
+            if (this.UserInputText.Text.Length < this.UserInputText.SelectionStart + 1)
+                return;
+
+            //remember where the cursor is
+            var SelectionStart = this.UserInputText.SelectionStart; 
+
+            //remove the text in front of the cursor by copying the text, and replacing with the 
+            //modified version
+            this.UserInputText.Text = this.UserInputText.Text.Remove(this.UserInputText.SelectionStart, 1);
+
+            //put the cursor back where it's supposed to be
+            this.UserInputText.SelectionStart = SelectionStart; 
+
+            //Ensure that we do not have any test selected
+            this.UserInputText.SelectionLength = 0;
         }
         #endregion
     }
