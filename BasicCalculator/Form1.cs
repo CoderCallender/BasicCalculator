@@ -150,7 +150,35 @@ namespace BasicCalculator
         /// </summary>
         private void CalculateEquation()
         {
-            throw new NotImplementedException();
+            
+
+            this.CalculationResultText.Text = ParseEquation();
+        }
+
+        /// <summary>
+        /// Parses the user's equation and calculates the result
+        /// </summary>
+        /// <returns></returns>
+        private string ParseEquation()
+        {
+            try
+            {
+                //get the user's equation input
+                var Input = UserInputText.Text;
+
+                //Remove all whitespaces
+                Input = Input.Replace(" ", "");
+
+                //new top level operation   
+                //var operation = new Operation();
+
+                return string.Empty;
+
+            }
+            catch(Exception ex)
+            {
+                return $"Invalid Equation. { ex.Message}";
+            }
         }
 
         #region Private Helpers
