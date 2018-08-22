@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace BasicCalculator
@@ -170,7 +171,21 @@ namespace BasicCalculator
                 Input = Input.Replace(" ", "");
 
                 //new top level operation   
-                //var operation = new Operation();
+                var operation = new Operation();
+                var leftSide = true;
+
+                //loop through each character from the input
+                //starting from the left
+                for(int i = 0; i < Input.Length; i++)
+                {
+                    //TODO: Handle order priority (BODMAS)
+
+                    if("0123456789.".Any(c => Input[i] == c))
+                    {
+                        if (leftSide)
+                            operation.LeftSide = AddNumberPart(operation.LeftSide, Input[i]);
+                    }
+                }
 
                 return string.Empty;
 
@@ -179,6 +194,24 @@ namespace BasicCalculator
             {
                 return $"Invalid Equation. { ex.Message}";
             }
+        }
+
+        /// <summary>
+        /// Attempts to add new character to the current number
+        /// checking if it is valid
+        /// </summary>
+        /// <param name="CurrentNumber">The current number string</param>
+        /// <param name="NewCharacter">The next character to add</param>
+        /// <returns></returns>
+        private string AddNumberPart(string CurrentNumber, char NewCharacter)
+        {
+            //check if there is already a . in the number
+            if(NewCharacter == '.' && CurrentNumber.Contains('.'))
+            {
+                throw new InvalidOperationException($"Number{CurrentNumber} already contains a .");
+            }
+
+            return CurrentNumber + NewCharacter;
         }
 
         #region Private Helpers
