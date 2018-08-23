@@ -184,15 +184,152 @@ namespace BasicCalculator
                     {
                         if (leftSide)
                             operation.LeftSide = AddNumberPart(operation.LeftSide, Input[i]);
+
+                        else
+                            operation.RightSide = AddNumberPart(operation.RightSide, Input[i]);
+                    }
+                    //if it is an operator, do this 
+                    else if("+-/*.".Any(c => Input[i] == c))
+                    {
+                        //if we are on the right side already, we need to calculate what we have
+                        //and set the result to the left side
+                        if(!leftSide)
+                        {
+                            var operationType = GetOperationType(Input[i]);
+
+                            //check if we have a right side number
+                            if (operation.RightSide.Length == 0)
+                            {
+                                if (operationType != OperationType.Minus)
+                                {
+                                    //Can't have an operator except for a minus in front of the first number
+                                    throw new InvalidOperationException($"Syntax error");
+                                }
+
+                                //if there is a minus in front of the number, that's ok, as it could be a negative 
+                                operation.RightSide += Input[i];
+                            }
+
+                            else
+                            {
+
+                                //calculate prev equation and set to the leftside
+                                operation.LeftSide = CalculateOperation(operation);
+
+                                //set new operator
+                                operation.OperationType = operationType;
+
+                                //clear the prev right side number
+                                operation.RightSide = string.Empty;
+                            }
+                        }
+
+                        else
+                        {
+                            var operationType = GetOperationType(Input[i]);
+
+                            if(operation.LeftSide.Length == 0)
+                            {
+                                if(operationType != OperationType.Minus)
+                                {
+                                    //Can't have an operator except for a minus in front of the first number
+                                    throw new InvalidOperationException($"Syntax error");
+                                }
+
+                                //if there is a minus in front of the number, that's ok, as it could be a negative 
+                                operation.LeftSide += Input[i];
+                            }
+                            //if we get here we have a left numer, and an operator
+                            else
+                            {
+                                operation.OperationType = operationType;
+                                leftSide = false;
+                            }
+                        }
                     }
                 }
 
-                return string.Empty;
+                //if we are done parsing with no exceptions
+                //calculate 
+
+               return CalculateOperation(operation);
+
+                //return string.Empty;
 
             }
             catch(Exception ex)
             {
                 return $"Invalid Equation. { ex.Message}";
+            }
+        }
+
+        /// <summary>
+        /// Calculate an <see cref="Operation"/> and returns the result
+        /// </summary>
+        /// <param name="operation">The operation to calculate</param>
+        private string CalculateOperation(Operation operation)
+        {
+            //store the number values of the string representations
+            double left = 0;
+            double right = 0;
+
+            //check if we have a valid left side number
+            if (string.IsNullOrEmpty(operation.LeftSide) || !double.TryParse(operation.LeftSide, out left))
+                throw new InvalidOperationException($"Syntax Error { operation.LeftSide }");
+
+            if (string.IsNullOrEmpty(operation.RightSide) || !double.TryParse(operation.RightSide, out right))
+                throw new InvalidOperationException($"Syntax Error { operation.RightSide }");
+
+            try
+            {
+                switch(operation.OperationType)
+                {
+                    case OperationType.Add:
+                        return (left + right).ToString();
+
+                    case OperationType.Minus:
+                        return (left - right).ToString();
+
+                    case OperationType.Divide:
+                        return (left / right).ToString();
+
+                    case OperationType.Multiply:
+                        return (left * right).ToString();
+
+                    default:
+                        throw new InvalidOperationException($"Unknown operator type {operation.OperationType}");
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to calculate operation {operation.LeftSide} {operation.OperationType} {operation.RightSide}. {ex.Message}");
+            }
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// returns the known <see cref="OperationType"/>
+        /// </summary>
+        /// <param name="character"></param>
+        /// <returns></returns>
+        private OperationType GetOperationType(char character)
+        {
+            switch(character)
+            {
+                case '+':
+                    return OperationType.Add;
+
+                case '-':
+                    return OperationType.Minus;
+
+                case '/':
+                    return OperationType.Divide;
+
+                case '*':
+                    return OperationType.Multiply;
+
+                default:
+                    throw new InvalidOperationException($"Unknown Operator Type {character}");
             }
         }
 
